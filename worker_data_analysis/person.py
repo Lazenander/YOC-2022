@@ -31,20 +31,3 @@ class Person:
         self.changeMind = _changeMind
         self.interviewWillingness = _interviewWillingness
         self.contact = _contact
-    
-    def personalInfoVectorlize(self):
-        return [self.gender, self.profession, self.educationBackground, self.workDuration,
-                self.locationDuringPandamic, self.isTherePositiveDuringPandamic, self.positivePolicy,
-                self.transferCostResponsibility, self.precautionarySchemeTime, self.incomeSchemeTime,
-                self.income, self.incomePolicy, self.isLocal, self.hometown, self.whyShanghai,
-                self.workDurationInShanghai, self.changeMind, self.interviewWillingness];
-        
-    def personalInfoVectorlizeMap(self):
-        return ["gender", "profession", "educationBackground", "workDuration",
-                "locationDuringPandamic", "isTherePositiveDuringPandamic", "positivePolicy",
-                "transferCostResponsibility", "precautionarySchemeTime", "incomeSchemeTime",
-                "income", "incomePolicy", "isLocal", "hometown", "whyShanghai",
-                "workDurationInShanghai", "changeMind", "interviewWillingness"];
-    
-    def independentVariables(self):
-        return 

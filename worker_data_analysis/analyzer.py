@@ -1,9 +1,10 @@
 import pandas as pd
 import datetime
+import seaborn as sns
 
 from person import Person
-
 from grapher import cnMap
+from mystat import ChiSquareTest
 
 # Form map between choices and scalars/vectors
 
@@ -97,7 +98,10 @@ for dataseries in dataframe:
                          incomePolicy, isLocal, hometown, whyShanghai, workDurationInShanghai, changeMind,
                          interviewWillingness, contact))
 
-# Display the location of IP address and hometown
+# Analysis
+print("<Analysis>\n")
+
+# Locations
 
 ipLocation = {}
 hometownLocation = {}
@@ -142,7 +146,7 @@ hometownLocationLst = []
 for location in hometownLocation.keys():
     hometownLocationLst.append((location, hometownLocation[location]))
 
-print("---Information based on locations---")
+print("--- Information based on locations ---")
 print(str(leaveShanghai) + " workers have left Shanghai, including " + str(localLeaveShanghai) + " Shanghainese.")
 print(str(atHometown) + " workers are at their hometown right now, including " + str(localAtHometown) + " Shanghainese.")
 print("Meaning that " + str(leaveShanghai - atHometown - localLeaveShanghai + localAtHometown) + " workers have left Shanghai and started to work at other cities beside their hometown.")
@@ -150,3 +154,50 @@ print("Above the ones that claimed not leaving Shanghai in the questionnaire, " 
 
 cnMap("IP", "IP related physical location", ipLocationLst, 0, max(ipLocation.values()))
 cnMap("hometown", "Hometown location", hometownLocationLst, 0, max(hometownLocation.values()))
+
+print("\n")
+
+# Treatments
+
+print("--- Treatments ---")
+
+print("1. H0: salaries have nothing to do with profession.")
+
+salaryProfessionMatrix = [[0 for j in range(3)] for i in range(4)]
+
+for person in people:
+    if person.income == 0 or person.profession == 0:
+        continue;
+    salaryProfessionMatrix[person.profession - 1][person.income - 1] += 1
+
+df, x2, pValue = ChiSquareTest(salaryProfessionMatrix)
+
+if pValue < 0.05:
+    print("   H0 is incorrect as p value is " + str(pValue) + ", less than 0.05.")
+else:
+    print("   H0 is correct as p value is " + str(pValue) + ", greater than 0.05.")
+
+print("2. H0: salaries have nothing to do with the worker's hometown.")
+
+hometown2num = {}
+cnt = 0
+for person in people:
+    if person.hometown not in hometown2num.keys():
+        hometown2num[person.hometown] = cnt
+        cnt += 1
+
+salaryHometownMatrix = [[0 for j in range(3)] for i in range(len(hometown2num.keys()))]
+
+for person in people:
+    if person.income == 0:
+        continue;
+    salaryHometownMatrix[hometown2num[person.hometown]][person.income - 1] += 1
+
+df, x2, pValue = ChiSquareTest(salaryHometownMatrix)
+
+if pValue < 0.05:
+    print("   H0 is incorrect as p value is " + str(pValue) + ", less than 0.05.")
+else:
+    print("   H0 is correct as p value is " + str(pValue) + ", greater than 0.05.")
+
+print("\n")
