@@ -3,6 +3,8 @@ import datetime
 
 from person import Person
 
+from grapher import cnMap
+
 # Form map between choices and scalars/vectors
 
 namemap = {"source": ["(空)|(跳过)", "微信", "其他"], "gender": ["(空)|(跳过)", "女", "男", "其他"],
@@ -95,4 +97,33 @@ for dataseries in dataframe:
                          incomePolicy, isLocal, hometown, whyShanghai, workDurationInShanghai, changeMind,
                          interviewWillingness, contact))
 
-    print(people[len(people) - 1].personalInfoVectorlize())
+    print(people[len(people) - 1].questionnaireLocation, people[len(people) - 1].personalInfoVectorlize())
+
+# Display the location of IP address and hometown
+
+ipLocation = {}
+hometownLocation = {}
+
+for person in people:
+    if person.questionnaireLocation in ipLocation.keys():
+        ipLocation[person.questionnaireLocation] += 1
+    else:
+        ipLocation[person.questionnaireLocation] = 1
+    
+    if person.hometown in hometownLocation.keys():
+        hometownLocation[person.hometown] += 1
+    else:
+        hometownLocation[person.hometown] = 1
+
+ipLocationLst = []
+
+for location in ipLocation.keys():
+    ipLocationLst.append((location, ipLocation[location]))
+
+hometownLocationLst = []
+
+for location in hometownLocation.keys():
+    hometownLocationLst.append((location, hometownLocation[location]))
+
+cnMap("IP", "IP related physical location", ipLocationLst, 0, max(ipLocation.values()))
+cnMap("hometown", "Hometown location", hometownLocationLst, 0, max(hometownLocation.values()))

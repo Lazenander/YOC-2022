@@ -45,3 +45,6 @@ class Person:
                 "transferCostResponsibility", "precautionarySchemeTime", "incomeSchemeTime",
                 "income", "incomePolicy", "isLocal", "hometown", "whyShanghai",
                 "workDurationInShanghai", "changeMind", "interviewWillingness"];
+    
+    def independentVariables(self):
+        return 
