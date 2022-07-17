@@ -97,12 +97,16 @@ for dataseries in dataframe:
                          incomePolicy, isLocal, hometown, whyShanghai, workDurationInShanghai, changeMind,
                          interviewWillingness, contact))
 
-    print(people[len(people) - 1].questionnaireLocation, people[len(people) - 1].personalInfoVectorlize())
-
 # Display the location of IP address and hometown
 
 ipLocation = {}
 hometownLocation = {}
+
+leaveShanghai = 0
+localLeaveShanghai = 0
+atHometown = 0
+localAtHometown = 0
+lied = 0
 
 for person in people:
     if person.questionnaireLocation in ipLocation.keys():
@@ -114,6 +118,19 @@ for person in people:
         hometownLocation[person.hometown] += 1
     else:
         hometownLocation[person.hometown] = 1
+    
+    if person.questionnaireLocation != "上海":
+        leaveShanghai += 1
+        if person.hometown == "上海":
+            localLeaveShanghai += 1
+    
+    if person.hometown == person.questionnaireLocation:
+        atHometown += 1
+        if person.hometown == "上海":
+            localAtHometown += 1
+    
+    if person.questionnaireLocation != "上海" and person.changeMind == 2:
+        lied += 1
 
 ipLocationLst = []
 
@@ -124,6 +141,12 @@ hometownLocationLst = []
 
 for location in hometownLocation.keys():
     hometownLocationLst.append((location, hometownLocation[location]))
+
+print("---Information based on locations---")
+print(str(leaveShanghai) + " workers have left Shanghai, including " + str(localLeaveShanghai) + " Shanghainese.")
+print(str(atHometown) + " workers are at their hometown right now, including " + str(localAtHometown) + " Shanghainese.")
+print("Meaning that " + str(leaveShanghai - atHometown - localLeaveShanghai + localAtHometown) + " workers have left Shanghai and started to work at other cities beside their hometown.")
+print("Above the ones that claimed not leaving Shanghai in the questionnaire, " + str(lied) + " lied.")
 
 cnMap("IP", "IP related physical location", ipLocationLst, 0, max(ipLocation.values()))
 cnMap("hometown", "Hometown location", hometownLocationLst, 0, max(hometownLocation.values()))
