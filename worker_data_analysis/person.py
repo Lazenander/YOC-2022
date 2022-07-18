@@ -31,3 +31,19 @@ class Person:
         self.changeMind = _changeMind
         self.interviewWillingness = _interviewWillingness
         self.contact = _contact
+    
+    def personalInfo(self):
+        return [self.questionnaireLocation, self.gender, self.profession, self.educationBackground,
+                self.workDuration, self.locationDuringPandamic, self.isTherePositiveDuringPandamic,
+                self.positivePolicy, self.transferCostResponsibility, self.goodCostResponsibility,
+                self.precautionarySchemeTime, self.incomeSchemeTime, self.income, self.incomePolicy,
+                self.isLocal, self.hometown, self.whyShanghai, self.workDurationInShanghai,
+                self.changeMind, self.interviewWillingness]
+    
+    def personalInfoName(self):
+        return ["questionnaireLocation", "gender", "profession", "educationBackground",
+                "workDuration", "locationDuringPandamic", "isTherePositiveDuringPandamic",
+                "positivePolicy", "transferCostResponsibility", "goodCostResponsibility",
+                "precautionarySchemeTime", "incomeSchemeTime", "income", "incomePolicy",
+                "isLocal", "hometown", "whyShanghai", "workDurationInShanghai",
+                "changeMind", "interviewWillingness"]

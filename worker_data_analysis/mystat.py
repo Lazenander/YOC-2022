@@ -18,7 +18,7 @@ def KM(s, z):
     return su;
 
 def log_igf(s, z):
-        if z < 0:
+        if z <= 0:
             return 0
         sc = (math.log(z) * s) - z - math.log(s);
         k = KM(s, z);
@@ -49,6 +49,8 @@ def ChiSquareTest(matrix):
     x2 = 0
     for i in range(len(matrix)):
         for j in range(len(matrix[i])):
+            if expected[i] * colsum[j] == 0:
+                continue;
             x2 += (expected[i] * colsum[j] - matrix[i][j])**2 / (expected[i] * colsum[j])
     df = (len(matrix) - 1) * (len(matrix[0]) - 1)
 

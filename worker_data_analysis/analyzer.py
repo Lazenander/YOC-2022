@@ -1,6 +1,7 @@
 import pandas as pd
 import datetime
 import seaborn as sns
+import matplotlib.pyplot as plt
 
 from person import Person
 from grapher import cnMap
@@ -161,7 +162,7 @@ print("\n")
 
 print("--- Treatments ---")
 
-print("1. H0: salaries have nothing to do with profession.")
+print("1. H0: salaries have nothing to do with worker's profession.")
 
 salaryProfessionMatrix = [[0 for j in range(3)] for i in range(4)]
 
@@ -173,9 +174,9 @@ for person in people:
 df, x2, pValue = ChiSquareTest(salaryProfessionMatrix)
 
 if pValue < 0.05:
-    print("   H0 is incorrect as p value is " + str(pValue) + ", less than 0.05.")
+    print("   H0 is incorrect as p value is %.3f, less than 0.050." % pValue)
 else:
-    print("   H0 is correct as p value is " + str(pValue) + ", greater than 0.05.")
+    print("   H0 is correct as p value is %.3f, greater than 0.050." % pValue)
 
 print("2. H0: salaries have nothing to do with the worker's hometown.")
 
@@ -196,8 +197,191 @@ for person in people:
 df, x2, pValue = ChiSquareTest(salaryHometownMatrix)
 
 if pValue < 0.05:
-    print("   H0 is incorrect as p value is " + str(pValue) + ", less than 0.05.")
+    print("   H0 is incorrect as p value is %.3f, less than 0.050." % pValue)
 else:
-    print("   H0 is correct as p value is " + str(pValue) + ", greater than 0.05.")
+    print("   H0 is correct as p value is %.3f, greater than 0.050." % pValue)
 
-print("\n")
+print("3. H0: salaries have nothing to do with the worker's working duration in Shanghai.")
+
+salaryWSDurationMatrix = [[0 for j in range(3)] for i in range(6)]
+
+for person in people:
+    if person.income == 0 or person.workDurationInShanghai == 0:
+        continue;
+    salaryWSDurationMatrix[person.workDurationInShanghai - 1][person.income - 1] += 1
+
+df, x2, pValue = ChiSquareTest(salaryWSDurationMatrix)
+
+if pValue < 0.05:
+    print("   H0 is incorrect as p value is %.3f, less than 0.050." % pValue)
+else:
+    print("   H0 is correct as p value is %.3f, greater than 0.050." % pValue)
+
+print("4. H0: salaries have nothing to do with the worker's education background.")
+
+salaryEduMatrix = [[0 for j in range(3)] for i in range(6)]
+
+for person in people:
+    if person.income == 0 or person.educationBackground == 0:
+        continue;
+    salaryEduMatrix[person.educationBackground - 1][person.income - 1] += 1
+
+df, x2, pValue = ChiSquareTest(salaryEduMatrix)
+
+if pValue < 0.05:
+    print("   H0 is incorrect as p value is %.3f, less than 0.050." % pValue)
+else:
+    print("   H0 is correct as p value is %.3f, greater than 0.050." % pValue)
+    
+print("5. H0: the responsibility of transfer cost have nothing to do with the worker's profession.")
+
+transferCostResponsibilityMatrix = [[0 for j in range(3)] for i in range(4)]
+
+for person in people:
+    if person.transferCostResponsibility == 0 or person.profession == [0]:
+        continue;
+    for j in range(len(person.transferCostResponsibility)):
+        transferCostResponsibilityMatrix[person.profession - 1][person.transferCostResponsibility[j] - 1] += 1
+
+df, x2, pValue = ChiSquareTest(transferCostResponsibilityMatrix)
+
+if pValue < 0.05:
+    print("   H0 is incorrect as p value is %.3f, less than 0.050." % pValue)
+else:
+    print("   H0 is correct as p value is %.3f, greater than 0.050." % pValue)
+
+print("6. H0: the responsibility of good cost have nothing to do with the worker's profession.")
+
+goodCostResponsibilityMatrix = [[0 for j in range(4)] for i in range(4)]
+
+for person in people:
+    if person.goodCostResponsibility == 0 or person.profession == 0:
+        continue;
+    goodCostResponsibilityMatrix[person.profession - 1][person.goodCostResponsibility - 1] += 1
+
+df, x2, pValue = ChiSquareTest(goodCostResponsibilityMatrix)
+
+if pValue < 0.05:
+    print("   H0 is incorrect as p value is %.3f, less than 0.050." % pValue)
+else:
+    print("   H0 is correct as p value is %.3f, greater than 0.050." % pValue)
+
+print("7. H0: the worker's profession have nothing to do with the worker's education background.")
+
+professionEduMatrix = [[0 for j in range(4)] for i in range(6)]
+
+for person in people:
+    if person.profession == 0 or person.educationBackground == 0:
+        continue;
+    professionEduMatrix[person.educationBackground - 1][person.profession - 1] += 1
+
+df, x2, pValue = ChiSquareTest(professionEduMatrix)
+
+if pValue < 0.05:
+    print("   H0 is incorrect as p value is %.3f, less than 0.050." % pValue)
+else:
+    print("   H0 is correct as p value is %.3f, greater than 0.050." % pValue)
+
+# p values of all combinations
+province2num = {}
+cnt = 0
+for person in people:
+    if person.hometown not in province2num.keys():
+        province2num[person.hometown] = cnt
+        cnt += 1
+    if person.questionnaireLocation not in province2num.keys():
+        province2num[person.questionnaireLocation] = cnt
+        cnt += 1
+
+
+personalInfoMatrix = []
+for person in people:
+    personalInfoMatrix.append(person.personalInfo())
+
+personalInfoLength = len(personalInfoMatrix[0])
+personalInfoPMatrix = [[0 for j in range(personalInfoLength)] for i in range(personalInfoLength)]
+
+personalInfoNameVector = people[0].personalInfoName()
+
+matrixBuffer = [[None for j in range(personalInfoLength)] for i in range(personalInfoLength)]
+
+for i in range(personalInfoLength):
+    for j in range(personalInfoLength):
+        type1 = type(personalInfoMatrix[0][i])
+        type2 = type(personalInfoMatrix[0][j])
+        if personalInfoNameVector[i] in namemap.keys():
+            size1 = len(namemap[personalInfoNameVector[i]]) - 1
+        else:
+            size1 = cnt
+        if personalInfoNameVector[j] in namemap.keys():
+            size2 = len(namemap[personalInfoNameVector[j]]) - 1
+        else:
+            size2 = cnt
+        
+        matrix = [[0 for j in range(size2)] for i in range(size1)]
+        
+        if type1 == list and type2 == list:
+            for personalInfoVec in personalInfoMatrix:
+                if personalInfoVec[i] == [0] or personalInfoVec[j] == [0]:
+                    continue
+                for x in range(len(personalInfoVec[i])):
+                    for y in range(len(personalInfoVec[j])):
+                        matrix[personalInfoVec[i][x] - 1][personalInfoVec[j][y] - 1] += 1
+        if type1 == list and type2 == int:
+            for personalInfoVec in personalInfoMatrix:
+                if personalInfoVec[i] == [0] or personalInfoVec[j] == 0:
+                    continue
+                for x in range(len(personalInfoVec[i])):
+                    matrix[personalInfoVec[i][x] - 1][personalInfoVec[j] - 1] += 1
+        if type1 == list and type2 == str:
+            for personalInfoVec in personalInfoMatrix:
+                if personalInfoVec[i] == [0]:
+                    continue
+                for x in range(len(personalInfoVec[i])):
+                    matrix[personalInfoVec[i][x] - 1][province2num[personalInfoVec[j]]] += 1
+        if type1 == int and type2 == list:
+            for personalInfoVec in personalInfoMatrix:
+                if personalInfoVec[i] == 0 or personalInfoVec[j] == [0]:
+                    continue
+                for y in range(len(personalInfoVec[j])):
+                    matrix[personalInfoVec[i] - 1][personalInfoVec[j][y] - 1] += 1
+        if type1 == int and type2 == int:
+            for personalInfoVec in personalInfoMatrix:
+                if personalInfoVec[i] == 0 or personalInfoVec[j] == 0:
+                    continue
+                matrix[personalInfoVec[i] - 1][personalInfoVec[j] - 1] += 1
+        if type1 == int and type2 == str:
+            for personalInfoVec in personalInfoMatrix:
+                if personalInfoVec[i] == 0:
+                    continue
+                matrix[personalInfoVec[i] - 1][province2num[personalInfoVec[j]]] += 1
+        if type1 == str and type2 == list:
+            for personalInfoVec in personalInfoMatrix:
+                if personalInfoVec[j] == [0]:
+                    continue
+                for y in range(len(personalInfoVec[j])):
+                    matrix[province2num[personalInfoVec[i]]][personalInfoVec[j][y] - 1] += 1
+        if type1 == str and type2 == int:
+            for personalInfoVec in personalInfoMatrix:
+                if personalInfoVec[j] == 0:
+                    continue
+                matrix[province2num[personalInfoVec[i]]][personalInfoVec[j] - 1] += 1
+        if type1 == str and type2 == str:
+            for personalInfoVec in personalInfoMatrix:
+                matrix[province2num[personalInfoVec[i]]][province2num[personalInfoVec[j]]] += 1
+        df, x2, pValue = ChiSquareTest(matrix)
+        personalInfoPMatrix[i][j] = pValue
+        matrixBuffer[i][j] = matrix.copy()
+
+sns.set(rc={'figure.figsize':(15,13)})
+sns.heatmap(data=personalInfoPMatrix, annot=True, fmt=".3f")
+plt.show()
+
+sns.set(rc={'figure.figsize':(5,4)})
+for i in range(len(personalInfoPMatrix)):
+    for j in range(i + 1, len(personalInfoPMatrix)):
+        if personalInfoPMatrix[i][j] < 0.05:
+            sns.heatmap(data = matrixBuffer[i][j], cmap = "YlGnBu", annot = True)
+            plt.xlabel(personalInfoNameVector[j])
+            plt.ylabel(personalInfoNameVector[i])
+            plt.show()
