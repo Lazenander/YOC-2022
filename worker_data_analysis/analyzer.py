@@ -375,7 +375,7 @@ for i in range(personalInfoLength):
 
 sns.set(rc={'figure.figsize':(15,13)})
 sns.heatmap(data=personalInfoPMatrix, annot=True, fmt=".3f")
-plt.show()
+#plt.show()
 
 sns.set(rc={'figure.figsize':(5,4)})
 for i in range(len(personalInfoPMatrix)):
@@ -384,4 +384,6 @@ for i in range(len(personalInfoPMatrix)):
             sns.heatmap(data = matrixBuffer[i][j], cmap = "YlGnBu", annot = True)
             plt.xlabel(personalInfoNameVector[j])
             plt.ylabel(personalInfoNameVector[i])
-            plt.show()
+            #plt.show()
+
+print(province2num)
